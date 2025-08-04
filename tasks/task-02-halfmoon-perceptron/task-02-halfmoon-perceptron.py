@@ -1,10 +1,8 @@
-#%%
 import numpy as np
 import numpy as np
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt # type: ignore
 from sklearn.model_selection import train_test_split
 
-#%%
 class Perceptron:
     def __init__(self, seed=0, input_size=2, learning_rate=0.01, epochs=100):
         self.seed = seed
@@ -17,28 +15,39 @@ class Perceptron:
         rng = np.random.default_rng(self.seed)
         ### START CODE HERE ###
         ### TODO: Initialize weights with small Gaussian noise using rng.normal
-        pass
+        self.weights = rng.normal(loc=0.0, scale=0.01, size=(self.input_size + 1))
         ### END CODE HERE ###
 
     def activation(self, x):
         ### START CODE HERE ###
         ### TODO: Implement the step activation function
-        pass
+        return np.where(x >= 0, 1, -1)
         ### END CODE HERE ###
 
     def predict(self, X):
         ### START CODE HERE ###
         ### TODO: Add bias term, compute dot product with weights, apply activation
-        pass
+        X = np.atleast_2d(X)
+        X_with_bias = np.insert(X, 0, 1, axis=1)
+        X_with_bias = np.dot(X_with_bias, self.weights)
+        return self.activation(X_with_bias)
         ### END CODE HERE ###
 
     def fit(self, X, y):
         ### START CODE HERE ###
         ### TODO: Implement the perceptron learning algorithm
-        pass
+        X_bias = np.insert(X, 0, 1, axis=1)
+
+        for epoch in range(self.epochs):
+            for x_i, y_true in zip(X_bias, y):
+                linear_output = np.dot(x_i, self.weights)
+                y_pred = self.activation(linear_output)
+
+                if y_pred != y_true:
+                    update = self.learning_rate * (y_true - y_pred) * x_i
+                    self.weights += update
         ### END CODE HERE ###
 
-#%%
 def generate_halfmoon(seed = 0,
                       n_samples=1000,
                       rad_min=50,

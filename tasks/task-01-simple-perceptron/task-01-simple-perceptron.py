@@ -1,10 +1,12 @@
 import numpy as np
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt # pyright: ignore[reportMissingModuleSource]
 from sklearn.datasets import make_blobs
 from sklearn.model_selection import train_test_split
-
+# import matplotlib
+# matplotlib.use('TkAgg') 
+ 
 class Perceptron:
-    def __init__(self, seed=0, input_size=2, learning_rate=0.01, epochs=100):
+    def __init__(self, seed=0, input_size=2, learning_rate=1, epochs=100):
         self.seed = seed
         self.learning_rate = learning_rate
         self.epochs = epochs
@@ -15,25 +17,38 @@ class Perceptron:
         rng = np.random.default_rng(self.seed)
         ### START CODE HERE ###
         ### TODO: Initialize weights with small Gaussian noise using rng.normal
-
+        self.weights = rng.normal(-1, 0.01, size=(self.input_size + 1))
+        self.bias = 0.0
         ### END CODE HERE ###
 
     def activation(self, x):
         ### START CODE HERE ###
         ### TODO: Implement the step activation function
-        pass
+        return np.where(x >= 0, 1, -1)
         ### END CODE HERE ###
 
     def predict(self, X):
         ### START CODE HERE ###
         ### TODO: Add a bias term to X, compute dot product with weights, and apply activation
-        pass
+        X = np.atleast_2d(X)
+        X_with_bias = np.insert(X, 0, 1, axis=1)
+        linear_output = np.dot(X_with_bias, self.weights)
+        return self.activation(linear_output)
         ### END CODE HERE ###
 
     def fit(self, X, y):
         ### START CODE HERE ###
         ### TODO: Implement the perceptron learning rule using weight updates
-        pass
+        X_bias = np.insert(X, 0, 1, axis=1)
+
+        for epoch in range(self.epochs):
+            for x_i, y_true in zip(X_bias, y):
+                dot_product = np.dot(x_i, self.weights)
+                y_pred = 1 if dot_product >= 0 else -1
+
+                if y_pred != y_true:
+                    update = self.learning_rate * (y_true - y_pred) * x_i
+                    self.weights += update
         ### END CODE HERE ###
 
 def generate_data(seed=0, samples=200, noise=1.5):
