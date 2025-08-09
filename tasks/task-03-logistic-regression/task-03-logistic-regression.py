@@ -46,7 +46,7 @@ class LogisticNeuron:
 
             ### TODO: Update weights and bias
             self.weights -= self.learning_rate * grad_w 
-            self.bias += self.learning_rate * grad_b
+            self.bias -= self.learning_rate * grad_b
 
             ### TODO: Compute loss and append to loss_history
             loss = 1/m * np.sum(-y * np.log(y_pred + 1e-15) - (1 - y) * np.log(1 - y_pred + 1e-15))
